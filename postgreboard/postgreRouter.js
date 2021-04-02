@@ -1,61 +1,18 @@
 var express = require('express');
 var router = express.Router();
 
+
+/*   PostgresDB  */
+const configjs = require("./config")
+const pool = configjs.postgre_pool;
+
 const { Client } = require("pg");
 const Query = require('pg').Query;
 
-var client = new Client(
-    { 
-        host: 'localhost',
-        user: 'postgres',
-        password: 'park0070!',
-        database: 'monolithic',
-        port : '5432'
-    }
-);
-
-client.connect(err => { if (err) { console.error('connection error', err.stack) } else { console.log('success!') } });
-
-
-
-router.get('/read', function(req, res, next) { 
-    //전체리스트
-    var pg_query = 
-    ` SELECT * FROM CONTENT CT 
-        INNER JOIN USERS U on U.user_id = CT.user_id 
-        ORDER BY CT.created_at DESC
-    `;
-
-    console.log("Query ==>",pg_query);
-
-    const query = new Query(pg_query);
-    client.query(query);
-    var rows = []; 
-    query.on("row",row=>{ rows.push(row); });
-    
-    query.on('end', () => { 
-        console.log(rows); 
-        console.log('query done'); 
-        res.send(rows); res.status(200).end(); 
-    }); 
-
-    query.on('error', err => { 
-        console.error(err.stack) 
-    });
-});
-
-
-
-
-/*   PostgresDB  */
-//const configjs = require("./config")
-//const pool = configjs.postgre_pool;
-
-
-/*
 //Search list
 router.get('/ms_contentlist', contentlist);
 
+/*
 //Search Id
 router.get('/ms_contentlist_id', contentlist_id);
 
@@ -67,15 +24,12 @@ router.post('/ms_updateContent' , updateContent);
 
 //DeleteMovie
 router.delete('/deleteContent',deleteContent);
-
+*/
 
 
 //Find Type1
 function contentlist(req,res,next){ 
     var response = {
-        key: params.key,
-        errorcode: 0,
-        errormessage: "success"
     };
 
     //전체리스트
@@ -86,7 +40,9 @@ function contentlist(req,res,next){
     `;
     console.log("Query ==>",pg_query);
 
-    pool.query(pg_query, (error, results) => {
+    const query = new Query(pg_query);
+
+    pool.query(query,(error,cb)=> {
         if (error || results.rowCount == 0) {
             response.errorcode = 1;
             response.errormessage = error ? error : "no data";
@@ -94,11 +50,12 @@ function contentlist(req,res,next){
         } else {
             response.results = results.rows;
         }
-        next(response);
+        cb(response);
     });
 
 }
 
+/*
 function contentlist_id(req,res,next){ 
     
     pg.connect(con, function(err, client) 
