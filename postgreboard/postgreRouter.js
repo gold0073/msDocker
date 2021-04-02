@@ -1,11 +1,58 @@
 var express = require('express');
 var router = express.Router();
+
+const { Client } = require("pg");
+const Query = require('pg').Query;
+
+var client = new Client(
+    { 
+        host: 'localhost',
+        user: 'postgres',
+        password: 'park0070!',
+        database: 'monolithic',
+        port : '5432'
+    }
+);
+
+client.connect(err => { if (err) { console.error('connection error', err.stack) } else { console.log('success!') } });
+
+
+
+router.get('/read', function(req, res, next) { 
+    //전체리스트
+    var pg_query = 
+    ` SELECT * FROM CONTENT CT 
+        INNER JOIN USERS U on U.user_id = CT.user_id 
+        ORDER BY CT.created_at DESC
+    `;
+
+    console.log("Query ==>",pg_query);
+
+    const query = new Query(pg_query);
+    client.query(query);
+    var rows = []; 
+    query.on("row",row=>{ rows.push(row); });
+    
+    query.on('end', () => { 
+        console.log(rows); 
+        console.log('query done'); 
+        res.send(rows); res.status(200).end(); 
+    }); 
+
+    query.on('error', err => { 
+        console.error(err.stack) 
+    });
+});
+
+
+
+
 /*   PostgresDB  */
 //const configjs = require("./config")
 //const pool = configjs.postgre_pool;
 
-var con = "tcp://postgres:park0070!@localhost:5432/postgres"; 
 
+/*
 //Search list
 router.get('/ms_contentlist', contentlist);
 
@@ -21,47 +68,15 @@ router.post('/ms_updateContent' , updateContent);
 //DeleteMovie
 router.delete('/deleteContent',deleteContent);
 
-const { Client } = require("pg");
-const Query = require('pg').Query;
 
-var client = new Client(
-    { 
-        host: 'localhost',
-        user: 'postgres',
-        password: 'park0070!',
-        database: 'monolithic',
-        port : '5432'
-    }
-);
-
-router.get('/read', function(req, res, next) { 
-
-    console.log("aaa"); 
-
-    const query = new Query("SELECT * FROM CONTENT");
-    client.query(query);
-    var rows = []; 
-    query.on("row",row=>{ rows.push(row); });
-     
-    query.on('end', () => { 
-        console.log(rows); 
-        console.log('query done'); 
-        res.send(rows); res.status(200).end(); 
-    }); 
-
-    query.on('error', err => { console.error(err.stack) });
-    }
-)
 
 //Find Type1
 function contentlist(req,res,next){ 
-    /*
     var response = {
         key: params.key,
         errorcode: 0,
         errormessage: "success"
     };
-    */
 
     //전체리스트
     const pg_query = 
@@ -71,7 +86,6 @@ function contentlist(req,res,next){
     `;
     console.log("Query ==>",pg_query);
 
-    /*
     pool.query(pg_query, (error, results) => {
         if (error || results.rowCount == 0) {
             response.errorcode = 1;
@@ -82,7 +96,7 @@ function contentlist(req,res,next){
         }
         next(response);
     });
-    */
+
 }
 
 function contentlist_id(req,res,next){ 
@@ -183,6 +197,6 @@ function deleteContent(req , res , next){
         });
     });
 }
-
+*/
 
 module.exports = router;
