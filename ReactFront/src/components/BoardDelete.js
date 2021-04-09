@@ -37,19 +37,11 @@ class BoardDelete extends React.Component {
       act_type: "content_delete",
     });
 
-    post(url, qstring).then((response) => {
-      console.log(response.data);
-      this.props.stateRefresh();
+    this.setState({
+      open: false,
     });
-
-    /*
-        const url = 'http://127.0.0.1:8800/mdb_boards/' + qs.stringify({content_id: id});
-        fetch(url, {
-           method: 'DELETE' 
-        });
-
-        this.props.stateRefresh();
-        */
+    
+    return post(url, qstring);
   }
 
   render() {

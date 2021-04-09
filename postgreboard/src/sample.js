@@ -6,7 +6,6 @@ var router = express.Router();
 const configjs = require("./config")
 const pool = configjs.postgre_pool;
 
-const { Client } = require("pg");
 const Query = require('pg').Query;
 
 pool.connect(err => { if (err) { console.error('connection error', err.stack) } else { console.log('success!') } });
