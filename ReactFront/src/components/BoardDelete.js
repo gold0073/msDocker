@@ -31,17 +31,14 @@ class BoardDelete extends React.Component {
   }
 
   deleteBoard(id) {
+    
     const url = "/api/ms-deleteContent";
     const qstring = qs.stringify({
       content_id: id,
       act_type: "content_delete",
     });
 
-    this.setState({
-      open: false,
-    });
-    
-    return post(url, qstring);
+    post(url, qstring);
   }
 
   render() {
@@ -64,7 +61,10 @@ class BoardDelete extends React.Component {
               variant="contained"
               color="primary"
               onClick={(e) => {
-                this.deleteBoard(this.props.id);
+                this.deleteBoard(this.props.id).then((response) => {
+                  console.log(response.data);
+                  this.props.stateRefresh();
+                });
               }}
             >
               삭제
