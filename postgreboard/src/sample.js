@@ -11,19 +11,22 @@ const Query = require('pg').Query;
 
 pool.connect(err => { if (err) { console.error('connection error', err.stack) } else { console.log('success!') } });
 
-router.get('/read', function(req, res, next) { 
+router.get('/api/read', function(req, res, next) { 
     //전체리스트
     var pg_query = 
-    ` SELECT * from content
+    ` SELECT * FROM CONTENT 
     `;
 
     console.log("Query ==>",pg_query);
 
     const sendquery = new Query(pg_query);
+
     pool.query(sendquery);
     var rows = []; 
 
-    sendquery.on("row",row=>{ rows.push(row); });
+    sendquery.on("row",row=>{ 
+        rows.push(row); 
+    });
     
     sendquery.on('end', () => { 
         console.log(rows); 
@@ -32,7 +35,7 @@ router.get('/read', function(req, res, next) {
     }); 
 
     sendquery.on('error', err => { 
-        console.error(err.stack) 
+        console.error(err.stack) ;
     });
 });
 

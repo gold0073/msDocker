@@ -56,13 +56,12 @@ function contentlist(req,res,next){
     sendquery.on('error', err => { 
         console.error(err.stack) 
     });
-
 }
 
 //Search detail
 function contentlist_detail(req,res,next){ 
     
-    var param_contentid = req.query.id || req.params.id;
+    var param_contentid = req.body.id ||req.query.id || req.params.id;
     
     var pg_query = 
         ` SELECT * FROM CONTENT CT 
@@ -91,9 +90,9 @@ function contentlist_detail(req,res,next){
 
 
 function addContent(req, res , next ){
-    var param_userid = req.query.user_id || req.param.user_id;
-    var param_title = req.query.title || req.param.title;
-    var param_context = req.query.context || req.param.context;
+    var param_userid = req.body.user_id || req.query.user_id || req.param.user_id;
+    var param_title = req.body.title || req.query.title || req.param.title;
+    var param_context = req.body.context ||req.query.context || req.param.context;
     
     
 
@@ -129,9 +128,9 @@ function addContent(req, res , next ){
 
 
 function updateContent(req, res , next ){
-    var param_title = req.query.title || req.param.title;
-    var param_context = req.query.context || req.param.context;
-    var param_contentid = req.query.content_id || req.param.content_id;
+    var param_title = req.body.title || req.query.title || req.param.title;
+    var param_context = req.body.context || req.query.context || req.param.context;
+    var param_contentid = req.body.content_id || req.query.content_id || req.param.content_id;
 
     //업데이트
     var pg_query = " UPDATE CONTENT SET title = $1, context = $2 WHERE content_id = $3;";
@@ -160,7 +159,7 @@ function updateContent(req, res , next ){
 }
 
 function deleteContent(req , res , next){
-    var param_contentid = req.query.content_id || req.param.content_id;
+    var param_contentid = req.body.content_id || req.query.content_id || req.param.content_id;
     
 
     //업데이트
